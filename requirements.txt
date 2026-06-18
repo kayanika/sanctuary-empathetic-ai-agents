@@ -1,0 +1,25 @@
+# Core agent orchestration
+langgraph>=0.2.0
+langchain>=0.3.0
+langchain-ollama>=0.2.0
+langchain-community>=0.3.0
+
+# RAG / vector store
+chromadb>=0.5.0
+langchain-chroma>=0.1.0
+
+# Embeddings (local, no API needed)
+sentence-transformers>=3.0.0
+langchain-huggingface>=0.1.0
+
+# Audio feature extraction
+librosa>=0.10.0
+soundfile>=0.12.0
+
+# Data handling
+numpy>=1.26.0
+pandas>=2.2.0
+scipy>=1.13.0
+
+# Environment
+python-dotenv>=1.0.0
