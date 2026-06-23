@@ -25,3 +25,8 @@ data/chroma_db/
 
 # docs
 docs/
+
+# dataset
+dataset/
+
+
