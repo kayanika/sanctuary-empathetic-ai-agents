@@ -132,3 +132,48 @@ def test_multimodal_features_recorded_in_trace():
     result = _run("I haven't been feeling like myself.", multimodal_features=features)
     assert result["aar_trace"][0]["multimodal_included"] is True
 
+# --- S-06 tests ---
+
+def test_parse_symptoms_clean_json():
+    """Clean JSON array parses into a list of strings."""
+    from src.agents.intake import _parse_symptoms
+    assert _parse_symptoms('["low mood >2 weeks", "fatigue"]') == ["low mood >2 weeks", "fatigue"]
+
+
+def test_parse_symptoms_with_markdown_fence():
+    """JSON wrapped in a markdown code fence still parses."""
+    from src.agents.intake import _parse_symptoms
+    raw = '```json\n["insomnia", "poor concentration"]\n```'
+    assert _parse_symptoms(raw) == ["insomnia", "poor concentration"]
+
+
+def test_parse_symptoms_with_surrounding_prose():
+    """JSON array embedded in prose is still extracted."""
+    from src.agents.intake import _parse_symptoms
+    raw = 'Here are the symptoms I found: ["fatigue", "low mood"]'
+    assert _parse_symptoms(raw) == ["fatigue", "low mood"]
+
+
+def test_parse_symptoms_garbage_returns_empty():
+    """Non-JSON or empty input degrades gracefully to []."""
+    from src.agents.intake import _parse_symptoms
+    assert _parse_symptoms("I could not find any symptoms.") == []
+    assert _parse_symptoms("") == []
+
+
+def test_extracted_symptoms_populated():
+    """Agent extracts a non-empty list of symptom strings from clear input (LLM call)."""
+    result = _run("I've been feeling really low and exhausted, and I can't concentrate at work.")
+    symptoms = result["extracted_symptoms"]
+    assert isinstance(symptoms, list)
+    assert len(symptoms) > 0
+    assert all(isinstance(s, str) for s in symptoms)
+
+
+def test_duration_extracted():
+    """When the user states a duration, it appears in at least one symptom string (LLM call)."""
+    result = _run("I've been feeling down for the past three weeks.")
+    symptoms = result["extracted_symptoms"]
+    joined = " ".join(symptoms).lower()
+    assert len(symptoms) > 0
+    assert any(w in joined for w in ["week", "3", "three", "month", "day"])

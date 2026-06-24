@@ -2,6 +2,8 @@ from langchain_ollama import ChatOllama
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from src.pipeline.state import TAOState
 import os
+import json
+import re
 
 INTAKE_SYSTEM_PROMPT = """You are a compassionate mental health support assistant conducting a brief wellness check-in.
 
@@ -16,6 +18,22 @@ Your role:
 - When multimodal signal features are provided alongside the user's message, use them as supplementary context to inform your understanding — but do not explicitly mention them to the user.
 
 Keep your response to 2-3 sentences. End with exactly one follow-up question.
+"""
+
+
+EXTRACTION_SYSTEM_PROMPT = """You are a clinical information extraction tool. Given a person's statement about how they have been feeling, extract a structured list of reported symptoms.
+
+Rules:
+- Output ONLY a JSON array of strings. No prose, no explanation, no markdown fences.
+- Each string is one symptom, in lowercase, using clinical-but-plain wording.
+- If the person states or implies a duration, append it (e.g "low mood >2 weeks", "insomnia 3 days").
+- Only extract symptoms the person actually reported. Do NOT infer symptoms they did not mention.
+- If no symptoms are reported, output an epmty array: []
+
+Example input: "I've been feeling really down for the past month and I can't sleep."
+Example output: ["low mood >1 month", "insomnia"]
+
+
 """
 
 def _format_features(features: dict) -> str:
@@ -39,6 +57,26 @@ def _format_features(features: dict) -> str:
     return "\n".join(lines)
     
         
+def _parse_symptoms(raw: str) -> list[str]:
+    """Parse the LLM's JSON array output into a list of symptom strings.
+    Falls back to an empty list if parsing fails (graceful degradation)."""
+    text = raw.strip()
+    # Strip markdown code fences if the model wrapped its output
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?\s*", "", text)
+        text = re.sub(r"\s*```$", "", text)
+    # Extract the JSON array even if surrounded by prose
+    match = re.search(r"\[.*\]", text, re.DOTALL)
+    if match:
+        text = match.group(0)
+    try:
+        parsed = json.loads(text)
+        if isinstance(parsed, list):
+            return [str(s).strip() for s in parsed if str(s).strip()]
+    except (json.JSONDecodeError, ValueError):
+        pass
+    return []
+
 
 def intake_agent(state: TAOState) -> dict:
     model = ChatOllama(
@@ -70,13 +108,28 @@ def intake_agent(state: TAOState) -> dict:
     response = model.invoke(messages)
     assistant_response = response.content
 
-  
-
+    extractor = ChatOllama(
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+        model=os.getenv("OLLAMA_MODEL", "gemma4:12b-mlx"),
+        temperature=0.0,
+    )
+    
+    user_turns = [m["content"]for m in history if m["role"]=="user"]
+    user_turns.append(user_input)
+    full_user_text = "".join(user_turns)
+    extraction_response = extractor.invoke(
+        SystemMessage(content=EXTRACTION_SYSTEM_PROMPT),
+        HumanMessage(Content=full_user_text),
+    )
+    
+    extracted_symptoms = _parse_symptoms(extraction_response.content)
+    
     trace_entry = {
         "agent": "intake",
         "input_summary": user_input[:300],
         "output_summary": assistant_response[:300],
         "multimodal_included": bool(features),
+        "symptoms_extracted": len(extracted_symptoms)
 
     }
 
@@ -85,6 +138,6 @@ def intake_agent(state: TAOState) -> dict:
             {"role": "user", "content": user_input},
             {"role": "assistant", "content": assistant_response},
         ],
-        "extracted_symptoms": [],  # populated in S-06
+        "extracted_symptoms": extracted_symptoms,
         "aar_trace": [trace_entry],
     }
