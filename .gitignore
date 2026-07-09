@@ -29,4 +29,12 @@ docs/
 # dataset
 dataset/
 
+*.pdf
+
+data/dsm5_real.txt
+
+
+
+
+
 

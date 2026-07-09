@@ -1,0 +1,106 @@
+SYNTHETIC / PARAPHRASED CLINICAL CRITERIA — NOT VERBATIM DSM-5
+================================================================
+This file contains structurally faithful, paraphrased diagnostic criteria written
+for development and testing of the TAO retrieval pipeline. It is NOT the verbatim
+DSM-5 text (which is copyrighted by the American Psychiatric Association) and must
+not be cited as an authoritative clinical source. Numeric thresholds (symptom counts,
+durations) reflect publicly known diagnostic facts. To use licensed real criteria,
+place them at data/dsm5_real.txt (gitignored) and re-run the knowledge base builder.
+
+## Major Depressive Disorder (MDD)
+
+### Core definition
+A major depressive episode is characterized by five or more of the nine symptoms
+listed below, present during the same two-week period and representing a change from
+prior functioning. At least one of the five must be either (1) depressed mood or
+(2) markedly diminished interest or pleasure.
+
+### Symptom criteria (five or more required)
+1. Depressed mood most of the day, nearly every day (sad, empty, or hopeless).
+2. Markedly diminished interest or pleasure in nearly all activities (anhedonia).
+3. Significant unintentional weight change or appetite change nearly every day.
+4. Insomnia or hypersomnia nearly every day.
+5. Psychomotor agitation or retardation observable by others.
+6. Fatigue or loss of energy nearly every day.
+7. Feelings of worthlessness or excessive or inappropriate guilt.
+8. Diminished ability to think or concentrate, or indecisiveness.
+9. Recurrent thoughts of death, recurrent suicidal ideation, or a suicide attempt.
+
+### Duration requirement
+Symptoms must persist for at least two weeks (14 days). An episode shorter than two
+weeks does not meet the threshold for a major depressive episode.
+
+### Distress and exclusion criteria
+The symptoms must cause clinically significant distress or impairment in social,
+occupational, or other important areas of functioning. The episode must not be
+attributable to the physiological effects of a substance or another medical condition,
+and must not be better explained by a psychotic disorder. There must never have been a
+manic or hypomanic episode (which would indicate a bipolar disorder instead).
+
+## Post-Traumatic Stress Disorder (PTSD)
+
+### Criterion A — Exposure to trauma
+Exposure to actual or threatened death, serious injury, or sexual violence by one or
+more of: directly experiencing the event; witnessing it in person; learning that it
+happened to a close family member or friend; or experiencing repeated or extreme
+exposure to aversive details of traumatic events.
+
+### Criterion B — Intrusion symptoms (one or more required)
+Recurrent involuntary intrusive memories; recurrent distressing dreams related to the
+event; dissociative flashbacks; intense psychological distress at exposure to cues;
+marked physiological reactions to cues.
+
+### Criterion C — Avoidance (one or more required)
+Persistent avoidance of trauma-related thoughts, feelings, or memories; or avoidance of
+external reminders (people, places, situations) that arouse those memories.
+
+### Criterion D — Negative alterations in cognition and mood (two or more required)
+Inability to remember key features of the event; persistent exaggerated negative beliefs
+about oneself or the world; distorted blame of self or others; persistent negative
+emotional state; markedly diminished interest in activities; feelings of detachment;
+persistent inability to experience positive emotions.
+
+### Criterion E — Alterations in arousal and reactivity (two or more required)
+Irritable behavior or angry outbursts; reckless or self-destructive behavior;
+hypervigilance; exaggerated startle response; problems with concentration; sleep
+disturbance.
+
+### Duration requirement
+The disturbance (Criteria B through E) must last for more than one month. Symptoms
+present for less than one month after a trauma may indicate acute stress disorder rather
+than PTSD.
+
+### Distress and exclusion criteria
+The disturbance causes clinically significant distress or impairment, and is not
+attributable to the effects of a substance or another medical condition.
+
+## Generalized Anxiety Disorder (GAD)
+
+### Core definition
+Excessive anxiety and worry, occurring more days than not for at least six months, about
+a number of events or activities. The individual finds it difficult to control the worry.
+
+### Symptom criteria (three or more required in adults)
+1. Restlessness or feeling keyed up or on edge.
+2. Being easily fatigued.
+3. Difficulty concentrating or mind going blank.
+4. Irritability.
+5. Muscle tension.
+6. Sleep disturbance (difficulty falling or staying asleep, or restless sleep).
+
+### Duration requirement
+Excessive worry must be present more days than not for at least six months.
+
+### Distress and exclusion criteria
+The anxiety causes clinically significant distress or impairment, is not attributable to
+a substance or medical condition, and is not better explained by another mental disorder.
+
+## PHQ-8 Severity Banding (screening reference)
+
+The PHQ-8 sums eight items, each scored 0 to 3, for a total of 0 to 24. Note that the
+PHQ-8 does NOT include the ninth PHQ-9 item on suicidal ideation, so it cannot be used to
+assess crisis or self-harm risk. Standard severity bands map to the four TAO tiers:
+- Score 0 to 4: minimal (no or minimal depressive symptoms).
+- Score 5 to 9: mild.
+- Score 10 to 14: moderate.
+- Score 15 to 24: severe (covers moderately severe and severe).
