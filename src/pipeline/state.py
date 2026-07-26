@@ -14,7 +14,8 @@ class TAOState(TypedDict):
     # --- Agent 2: Diagnostic ---
     diagnostic_hypothesis: str
     retrieved_passages: list[str]   # DSM-5 passages retrieved via RAG
-    phq_tier: str                   # "minimal" | "mild" | "moderate" | "severe"
+    phq_tier: str  # "minimal" | "mild" | "moderate" | "severe" | "undetermined"
+
 
     # --- Agent 3: Oversight ---
     audit_notes: str
