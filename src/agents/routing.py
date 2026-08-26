@@ -1,15 +1,5 @@
 from src.pipeline.state import TAOState
-
-CRISIS_KEYWORDS = [
-    "suicidal", "suicide",
-    "self-harm", "self harm", "selfharm",
-    "kill myself", "killing myself", "killed myself",
-    "end my life", "ending my life",
-    "hurt myself", "hurting myself",
-    "want to die", "wanting to die",
-    "don't want to live", "dont want to live",
-    "no reason to live",
-]
+from src.safety.crisis import check_crisis
 
 
 def routing_agent(state: TAOState) -> dict:
@@ -21,7 +11,8 @@ def routing_agent(state: TAOState) -> dict:
     (Stub: real JITAI mapping logic added in Phase 7)
     """
     user_input = state.get("user_input", "").lower()
-    crisis = any(kw in user_input for kw in CRISIS_KEYWORDS)
+    crisis = check_crisis(state.get("user_input", ""))
+
 
     trace_entry = {
         "agent": "routing",

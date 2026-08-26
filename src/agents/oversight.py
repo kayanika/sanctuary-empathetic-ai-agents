@@ -111,4 +111,6 @@ def oversight_agent(state: TAOState) -> dict:
         "assessment_approved": approved,
         "oversight_corrections": corrections,
         "aar_trace": [trace_entry],
+        "oversight_confidence": verdict["confidence"],
+
     }

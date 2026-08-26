@@ -21,6 +21,8 @@ class TAOState(TypedDict):
     audit_notes: str
     assessment_approved: bool
     oversight_corrections: list[str]
+    oversight_confidence: float     # verifier's self-reported confidence (for S-26 calibration)
+
 
     # --- Agent 4: Routing ---
     recommended_intervention: str
